@@ -442,13 +442,24 @@ pub(crate) fn search_bravais_group(
         return Err(MoyoError::TooLargeToleranceError);
     }
 
-    let complemented_rotations = traverse(&rotations);
-    if complemented_rotations.len() != rotations.len() {
+    // The candidates form a group exactly when their products stay among them.
+    // Check that before traversing: a loose angle tolerance can admit a
+    // candidate of infinite order, such as an integer shear of a skewed basis,
+    // and traversing generators that do not close never terminates.
+    let candidates: HashSet<Rotation> = rotations.iter().copied().collect();
+    let closed = rotations.iter().all(|lhs| {
+        rotations
+            .iter()
+            .all(|rhs| candidates.contains(&(lhs * rhs)))
+    });
+    if !closed {
         debug!(
             "Found automorphisms for the lattice do not form a group. Consider reducing symprec and angle_tolerance."
         );
         return Err(MoyoError::TooLargeToleranceError);
     }
+
+    let complemented_rotations = traverse(&rotations);
     debug!("Order of Bravais group: {}", complemented_rotations.len());
     Ok(complemented_rotations)
 }

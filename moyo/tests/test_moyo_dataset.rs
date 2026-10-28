@@ -862,6 +862,22 @@ fn test_with_high_symprec_and_angle_tolerance() {
 }
 
 #[test]
+fn test_with_mp_766029() {
+    // https://next-gen.materialsproject.org/materials/mp-766029
+    // R3m. With a 5 degree angle tolerance, the lattice search on its skewed
+    // basis admits integer shears of infinite order, whose closure under
+    // multiplication never terminated.
+    let path = Path::new("tests/assets/mp-766029.json");
+    let cell: Cell = serde_json::from_str(&fs::read_to_string(path).unwrap()).unwrap();
+
+    let symprec = 1e-3;
+    let angle_tolerance = AngleTolerance::Radian(5.0_f64.to_radians());
+
+    let dataset = assert_dataset(&cell, symprec, angle_tolerance, Setting::default());
+    assert_eq!(dataset.number, 160); // R3m
+}
+
+#[test]
 fn test_wyckoff_position_assignment() {
     let symprec = 1e-4;
 

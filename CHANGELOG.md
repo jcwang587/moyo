@@ -8,6 +8,10 @@ Unlisted patch versions (e.g. v0.7.1, v0.7.3, v0.7.6, v0.7.7) contain only depen
 
 ## Unreleased
 
+### moyo
+
+- Return `TooLargeToleranceError` instead of never terminating when the tolerances admit lattice automorphism candidates of infinite order, such as integer shears of a skewed basis under a loose `angle_tolerance`. The iterative symmetry search then retries with smaller tolerances.
+
 ### moyopy
 
 - Drop Python 3.10 support. Require Python 3.11 or later and build wheels with the Python 3.11 stable ABI. Use `typing.Self` and remove the direct `typing-extensions` dependency (#487).
